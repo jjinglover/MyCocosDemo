@@ -168,36 +168,30 @@ namespace RVO {
 #pragma omp parallel for
 #endif
 		for (int i = 0; i < static_cast<int>(agents_.size()); ++i) {
-			if (agents_[i]->running_)
-			{
-				agents_[i]->computeNeighbors();
-				agents_[i]->computeNewVelocity();
-			}
+			agents_[i]->computeNeighbors();
+			agents_[i]->computeNewVelocity();
 		}
 
 #ifdef _OPENMP
 #pragma omp parallel for
 #endif
 		for (int i = 0; i < static_cast<int>(agents_.size()); ++i) {
-			if (agents_[i]->running_)
-			{
-				agents_[i]->update();
-			}
+			agents_[i]->update();
 		}
 
 		globalTime_ += timeStep_;
 	}
 
-	void RVOSimulator::doOneStep(size_t agentNo)
+	void RVOSimulator::doOneStep(size_t agentNo, bool buildKdTree)
 	{
-		kdTree_->buildAgentTree();
-
-		if (agents_[agentNo]->running_)
+		if (buildKdTree)
 		{
-			agents_[agentNo]->computeNeighbors();
-			agents_[agentNo]->computeNewVelocity();
-			agents_[agentNo]->update();
+			kdTree_->buildAgentTree();
 		}
+
+		agents_[agentNo]->computeNeighbors();
+		agents_[agentNo]->computeNewVelocity();
+		agents_[agentNo]->update();
 	}
 
 	size_t RVOSimulator::getAgentAgentNeighbor(size_t agentNo, size_t neighborNo) const
@@ -380,9 +374,14 @@ namespace RVO {
 		agents_[agentNo]->velocity_ = velocity;
 	}
 
-	void RVOSimulator::setAgentRunning(size_t agentNo, bool running)
+	void RVOSimulator::setAgentMass(size_t agentNo, float mass)
 	{
-		agents_[agentNo]->running_ = running;
+		agents_[agentNo]->mass_ = mass;
+	}
+
+	float RVOSimulator::getAgentMass(size_t agentNo) const
+	{
+		return agents_[agentNo]->mass_;
 	}
 
 	void RVOSimulator::setTimeStep(float timeStep)

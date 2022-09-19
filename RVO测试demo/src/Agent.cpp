@@ -39,7 +39,7 @@ namespace RVO {
 	Agent::Agent(RVOSimulator *sim) : maxNeighbors_(0), maxSpeed_(0.0f)
 		, neighborDist_(0.0f), radius_(0.0f), sim_(sim)
 		, timeHorizon_(0.0f), timeHorizonObst_(0.0f)
-		, id_(0), running_(true){ }
+		, id_(0){ }
 
 	void Agent::computeNeighbors()
 	{
@@ -293,11 +293,17 @@ namespace RVO {
 			const Agent *const other = agentNeighbors_[i].second;
 
 			const Vector2 relativePosition = other->position_ - position_;
-			const Vector2 relativeVelocity = velocity_ - other->velocity_;
+			//const Vector2 relativeVelocity = velocity_ - other->velocity_;
 			const float distSq = absSq(relativePosition);
 			const float combinedRadius = radius_ + other->radius_;
 			const float combinedRadiusSq = sqr(combinedRadius);
-
+			//实现大单位挤开小单位
+			float massRatio = (other->mass_ / (mass_ + other->mass_));
+			float neighborMassRatio = (mass_ / (mass_ + other->mass_));
+			Vector2 velocityOpt = (massRatio >= 0.5f ? (velocity_ - massRatio * velocity_) * 2 : prefVelocity_ + (velocity_ - prefVelocity_) * massRatio * 2);
+			Vector2 neighborVelocityOpt = (neighborMassRatio >= 0.5f ? 2 * other->velocity_ * (1 - neighborMassRatio) : other->prefVelocity_ + (other->velocity_ - other->prefVelocity_) * neighborMassRatio * 2);
+			const Vector2 relativeVelocity = velocityOpt - neighborVelocityOpt;
+			
 			Line line;
 			Vector2 u;
 
@@ -349,7 +355,8 @@ namespace RVO {
 				u = (combinedRadius * invTimeStep - wLength) * unitW;
 			}
 
-			line.point = velocity_ + 0.5f * u;
+			//line.point = velocity_ + 0.5f * u;
+			line.point = velocityOpt + massRatio * u;
 			orcaLines_.push_back(line);
 		}
 

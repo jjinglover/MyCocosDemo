@@ -102,7 +102,8 @@ namespace RVO {
 		Vector2 velocity_;
 
 		size_t id_;
-		bool running_;
+		//物体质量
+		float mass_ = 1.0f;
 
 		friend class KdTree;
 		friend class RVOSimulator;

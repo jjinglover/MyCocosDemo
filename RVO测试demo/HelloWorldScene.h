@@ -56,6 +56,7 @@ private:
     cocos2d::EventListenerTouchOneByOne* m_touchListener;
 
     cocos2d::Sprite* m_goalSp;
+    cocos2d::Sprite* m_bigSp;
     RVO::RVOSimulator* m_sim;
     std::vector<cocos2d::Sprite*> m_spVec;
 };

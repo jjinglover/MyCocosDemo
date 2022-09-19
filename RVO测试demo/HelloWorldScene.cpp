@@ -4,6 +4,7 @@ USING_NS_CC;
 using namespace RVO;
 const float maxSpeed = 200;
 Vector2 goalPos = Vector2(480, 320);
+Vector2 bigGoalPos = Vector2(0, 0);
 
 Scene* HelloWorld::createScene()
 {
@@ -63,6 +64,14 @@ void HelloWorld::initSet()
 	m_sim->setTimeStep(0.016f);
 	m_sim->setAgentDefaults(60, 10, 1, 1, 20, maxSpeed);
 	
+	Vector2 p(100, 100);
+	m_sim->addAgent(p);
+	m_sim->setAgentMass(0, 1000.0f);
+
+	m_bigSp = Sprite::create("big.png");
+	m_bigSp->setPosition(p.x(), p.y());
+	this->addChild(m_bigSp);
+
 	for (int i = 0; i < 10; ++i)
 	{
 		Vector2 p(640, 320);
@@ -82,14 +91,26 @@ void HelloWorld::initSet()
 
 void HelloWorld::update(float dt) 
 {
-	for (size_t i = 0; i < m_sim->getNumAgents(); ++i) {
+	for (size_t i = 1; i < m_sim->getNumAgents(); ++i) {
 		auto p = m_sim->getAgentPosition(i) - goalPos;
 		if (absSq(p) < m_sim->getAgentRadius(i) * m_sim->getAgentRadius(i) * 2 * 2)
 		{
 			//到达目标，暂停
-			m_sim->setAgentRunning(i, false);
+			m_sim->setAgentPrefVelocity(i, Vector2(0, 0));
 		}
 	}
+
+	if (bigGoalPos.x()!=0)
+	{
+		unsigned int index = 0;
+		auto p = m_sim->getAgentPosition(index) - bigGoalPos;
+		if (absSq(p) < m_sim->getAgentRadius(index) * m_sim->getAgentRadius(index) * 2 * 2)
+		{
+			//到达目标，暂停
+			m_sim->setAgentPrefVelocity(index, Vector2(0, 0));
+		}
+	}
+
 	this->setPreferredVelocity();
 	m_sim->doStep();
 	this->updateSpPositon();
@@ -97,7 +118,7 @@ void HelloWorld::update(float dt)
 
 void HelloWorld::setPreferredVelocity()
 {
-	for (size_t i = 0; i < m_sim->getNumAgents(); ++i)
+	for (size_t i = 1; i < m_sim->getNumAgents(); ++i)
 	{
 		Vector2 goalVector = goalPos - m_sim->getAgentPosition(i);
 		if (absSq(goalVector) > 1.0f) {
@@ -110,35 +131,66 @@ void HelloWorld::setPreferredVelocity()
 		Vector2 newV = (m_sim->getAgentPrefVelocity(i) + Vector2(cos(angle), sin(angle))) * 1.0;
 		m_sim->setAgentPrefVelocity(i, newV);
 	}
+
+	unsigned int index = 0;
+	if (bigGoalPos.x() != 0)
+	{
+		Vector2 goalVector = bigGoalPos - m_sim->getAgentPosition(index);
+		if (absSq(goalVector) > 1.0f) {
+			goalVector = normalize(goalVector) * maxSpeed;
+		}
+		m_sim->setAgentPrefVelocity(index, goalVector);
+	}
+	else
+	{
+		m_sim->setAgentPrefVelocity(index, Vector2(0, 0));
+	}
 }
 
 void HelloWorld::updateSpPositon()
 {
 	for (int i = 0; i < m_spVec.size(); i++)
 	{
-		Vector2 v = m_sim->getAgentPosition(i);
+		Vector2 v = m_sim->getAgentPosition(i+1);
 		m_spVec[i]->setPosition(Vec2(v.x(), v.y()));
 	}
+
+	auto p= m_sim->getAgentPosition(0);
+	m_bigSp->setPosition(p.x(), p.y());
 }
 
+int type = 0;
 bool HelloWorld::onTouchBegan(cocos2d::Touch* touch, Event* unused_event)
 {
-	return true;
+	bigGoalPos= Vector2(0,0);
+	if (m_goalSp->getBoundingBox().containsPoint(touch->getLocation()))
+	{
+		type = 1;
+		return true;
+	}
+	if (m_bigSp->getBoundingBox().containsPoint(touch->getLocation()))
+	{
+		type = 2;
+		return true;
+	}
+	return false;
 }
 
 void HelloWorld::onTouchMoved(cocos2d::Touch* touch, Event* unused_event)
 {
+	auto touchPos = touch->getLocation();
+	if (type==1)
+	{
+		goalPos = Vector2(touchPos.x, touchPos.y);
+		m_goalSp->setPosition(goalPos.x(), goalPos.y());
+	}
 }
 
 void HelloWorld::onTouchEnded(cocos2d::Touch* touch, Event* unused_event)
 {
-	auto touchPos = touch->getLocation();
-	goalPos= Vector2(touchPos.x, touchPos.y);
-
-	m_goalSp->setPosition(goalPos.x(), goalPos.y());
-
-	for (size_t i = 0; i < m_sim->getNumAgents(); ++i)
+	if (type == 2)
 	{
-		m_sim->setAgentRunning(i, true);
+		auto touchPos = touch->getLocation();
+		bigGoalPos = Vector2(touchPos.x, touchPos.y);
 	}
 }

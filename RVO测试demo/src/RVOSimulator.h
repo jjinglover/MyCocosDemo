@@ -210,7 +210,8 @@ namespace RVO {
 		 *             each agent.
 		 */
 		void doStep();
-		void doOneStep(size_t agentNo);
+		//更新某一个agent
+		void doOneStep(size_t agentNo,bool buildKdTree);
 
 		/**
 		 * \brief      Returns the specified agent neighbor of the specified
@@ -572,7 +573,10 @@ namespace RVO {
 		/*
 			add by sant
 		*/
-		void setAgentRunning(size_t agentNo, bool running);
+		//设置物体质量
+		void setAgentMass(size_t agentNo, float mass);
+		//获取物体质量
+		float getAgentMass(size_t agentNo) const;
 		/**
 		 * \brief      Sets the time step of the simulation.
 		 * \param      timeStep        The time step of the simulation.
