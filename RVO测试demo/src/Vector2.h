@@ -41,8 +41,6 @@
 #include <cmath>
 #include <ostream>
 
-#include "Export.h"
-
 namespace RVO {
 	/**
 	 * \brief      Defines a two-dimensional vector.

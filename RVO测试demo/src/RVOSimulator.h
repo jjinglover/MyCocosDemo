@@ -42,7 +42,6 @@
 #include <limits>
 #include <vector>
 
-#include "Export.h"
 #include "Vector2.h"
 
 namespace RVO {
@@ -210,7 +209,7 @@ namespace RVO {
 		 *             each agent.
 		 */
 		void doStep();
-		//更新某一个agent
+		//锟斤拷锟斤拷某一锟斤拷agent
 		void doOneStep(size_t agentNo,bool buildKdTree);
 
 		/**
@@ -573,9 +572,9 @@ namespace RVO {
 		/*
 			add by sant
 		*/
-		//设置物体质量
+		//锟斤拷锟斤拷锟斤拷锟斤拷锟斤拷锟斤拷
 		void setAgentMass(size_t agentNo, float mass);
-		//获取物体质量
+		//锟斤拷取锟斤拷锟斤拷锟斤拷锟斤拷
 		float getAgentMass(size_t agentNo) const;
 		/**
 		 * \brief      Sets the time step of the simulation.

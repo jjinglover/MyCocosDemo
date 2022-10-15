@@ -33,7 +33,6 @@
 #ifndef RVO_RVO_H_
 #define RVO_RVO_H_
 
-#include "Export.h"
 #include "RVOSimulator.h"
 #include "Vector2.h"
 
