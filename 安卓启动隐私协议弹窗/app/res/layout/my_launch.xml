@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#7f7f7f">
+    <FrameLayout
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:layout_gravity="center"
+      android:id="@+id/launch_con_node"
+      android:background="#ffffff"
+      android:orientation="horizontal">
+      <TextView
+        android:id="@+id/launch_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:layout_gravity="left"
+        android:text="@string/user_service"
+        android:textColor="@color/black"
+        android:textSize="18sp"/>
+      <Button
+        android:id="@+id/launch_exitBtn"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="0dp"
+        android:layout_gravity="right"
+        style="?android:attr/borderlessButtonStyle"
+        android:background="@drawable/mylaunch_back" />
+      <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="#888888"
+        android:layout_marginTop="38dp"
+        android:orientation="horizontal">
+      </LinearLayout>
+      <WebView
+        android:id="@+id/launch_WebView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="40dp"/>
+    </FrameLayout>
+</LinearLayout>

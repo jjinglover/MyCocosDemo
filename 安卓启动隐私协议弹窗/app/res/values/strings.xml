@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Test</string>
+    <string name="user_content">点击查看《服务协议》和《隐私政策》，了解详细信息。</string>
+    <string name="user_service">《服务协议》</string>
+    <string name="user_private">《隐私政策》</string>
+    <string name="url_service">https:www.baidu.com</string>
+    <string name="url_private">https:www.qq.com </string>
+</resources>
